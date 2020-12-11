@@ -116,10 +116,12 @@ func (abi ABI) UnpackIntoInterface(v interface{}, name string, data []byte) erro
 	if err != nil {
 		return err
 	}
+	fmt.Printf("unpack into interface args: %+v\n", args)
 	unpacked, err := args.Unpack(data)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("unpacked from unpack into inteface: %+v\n", unpacked)
 	return args.Copy(v, unpacked)
 }
 

@@ -117,23 +117,23 @@ func DeployContract(opts *TransactOpts, abi abi.ABI, bytecode []byte, backend Co
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (c *BoundContract) Call(opts *CallOpts, results *[]interface{}, method string, params ...interface{}) error {
+func (c *BoundContract) Call(opts *CallOpts, results interface{}, method string, params ...interface{}) error {
 	// Don't crash on a lazy user
 	if opts == nil {
 		opts = new(CallOpts)
 	}
-	if results == nil {
-		results = new([]interface{})
-	}
+	// if results == nil {
+	// results = new([]interface{})
+	// }
 	// Pack the input, call and unpack the results
 	input, err := c.abi.Pack(method, params...)
 	if err != nil {
 		return err
 	}
 	var (
-		msg    = ethereum.CallMsg{From: opts.From, To: &c.address, Data: input}
-		ctx    = ensureContext(opts.Context)
-		code   []byte
+		msg = ethereum.CallMsg{From: opts.From, To: &c.address, Data: input}
+		ctx = ensureContext(opts.Context)
+		code []byte
 		output []byte
 	)
 	if opts.Pending {
@@ -164,14 +164,14 @@ func (c *BoundContract) Call(opts *CallOpts, results *[]interface{}, method stri
 			}
 		}
 	}
-
-	if len(*results) == 0 {
-		res, err := c.abi.Unpack(method, output)
-		*results = res
-		return err
-	}
-	res := *results
-	return c.abi.UnpackIntoInterface(res[0], method, output)
+	
+	// if len(*results) == 0 {
+	// res, err := c.abi.Unpack(method, output)
+	// *results = res
+	// return err
+	// }
+	// res := *results
+	return c.abi.UnpackIntoInterface(results, method, output)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
